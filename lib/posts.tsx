@@ -30,6 +30,20 @@ export async function getPostByName(fileName: string): Promise<BlogPost | undefi
    const {frontmatter, content} = await compileMDX<{ title: string, date: string, tags: string[] }>({
       source: rawMDX,
    })
+
+   const id = fileName.replace(/\.mdx$/, '')
+
+   const blogPostObj: BlogPost = {
+      meta: {
+         id,
+         title: frontmatter.title,
+         date: frontmatter.date,
+         tags: frontmatter.tags
+      },
+      content
+   }
+
+   return blogPostObj
 }
 
 export async function getPostsMeta(): Promise<Meta[] | undefined> {
@@ -53,6 +67,7 @@ export async function getPostsMeta(): Promise<Meta[] | undefined> {
 
    for (const file of filesArray) {
       const post = await getPostByName(file)
+
       if (post) {
          const {meta} = post
          posts.push(meta)
